@@ -104,6 +104,39 @@ class UserDatabaseHelper {
         return null
     }
 
+    // Check if email and password match any user
+    fun checkUserCredentials(email: String, password: String): Boolean {
+        val connection = connectToDatabase()
+        if (connection != null) {
+            val query = "SELECT * FROM users WHERE email = ? AND password = ?"
+            val preparedStatement = connection.prepareStatement(query)
+            preparedStatement.setString(1, email)
+            preparedStatement.setString(2, password)
+            val resultSet = preparedStatement.executeQuery()
+            val userExists = resultSet.next()  // If a user is found
+            resultSet.close()
+            connection.close()
+            return userExists
+        }
+        return false
+    }
+
+    // Check if user exists by email
+    fun checkUserExistence(email: String): Boolean {
+        val connection = connectToDatabase()
+        if (connection != null) {
+            val query = "SELECT * FROM users WHERE email = ?"
+            val preparedStatement = connection.prepareStatement(query)
+            preparedStatement.setString(1, email)
+            val resultSet = preparedStatement.executeQuery()
+            val userExists = resultSet.next()
+            resultSet.close()
+            connection.close()
+            return userExists
+        }
+        return false
+    }
+
 
 }
 // User data class to store user information
