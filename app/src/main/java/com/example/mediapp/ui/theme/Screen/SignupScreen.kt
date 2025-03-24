@@ -111,3 +111,11 @@ fun SignupScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
+// Navigate to login screen if the user already has an account
+        Button(onClick = {
+            navController.navigate(route = "login")
+        }) {
+            Text(text = "Already have an account, Login")
+        }
+    }
+}
