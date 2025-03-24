@@ -59,4 +59,12 @@ fun TopBar(navController: NavController, authViewModel: AuthViewModel) {
     }
 }
 
-
+@Composable
+fun HomeButton(text: String, onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+    ) {
+        Text(text)
+    }
+}
