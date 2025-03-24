@@ -100,3 +100,14 @@ fun SignupScreen(
             }
         )
 
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Signup button
+        Button(onClick = {
+            authViewModel.signup(email, password, navController)
+        }) {
+            Text(text = "Create account")
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
