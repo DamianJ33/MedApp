@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-clinic
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: clinic_db
+      MYSQL_USER: clinic_user
+      MYSQL_PASSWORD: clinic_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - clinic_network
+
+  kotlin-app:
+    build: .
+    container_name: kotlin_app
+    restart: always
+    depends_on:
+      - mysql
+    networks:
+      - clinic_network  # Używamy tej samej sieci co mysql
+    ports:
+      - "8080:8080"
+    environment:
+      DATABASE_URL: "jdbc:mysql://mysql:3306/clinic_db"
+      DATABASE_USER: "clinic_user"
+      DATABASE_PASSWORD: "clinic_password"
+
+volumes:
+  mysql_data:
+
+networks:
+  clinic_network:  # Jedna sieć dla obu usług
