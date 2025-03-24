@@ -40,6 +40,24 @@ class UserDatabaseHelper {
         return false
     }
 
+    // Create a table if it doesn't exist
+    fun createTable() {
+        val connection = connectToDatabase()
+        if (connection != null) {
+            val query = """
+                CREATE TABLE IF NOT EXISTS users (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    email VARCHAR(255),
+                    password VARCHAR(255)
+                )
+            """
+            val statement = connection.createStatement()
+            statement.executeUpdate(query)
+            println("Table created successfully!")
+            connection.close()
+        }
+    }
+
 
 }
 // User data class to store user information
