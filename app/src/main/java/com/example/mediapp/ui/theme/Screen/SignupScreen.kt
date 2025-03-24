@@ -63,3 +63,23 @@ fun SignupScreen(
         }
     }
 
+
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = "Signup page", fontSize = 32.sp)
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Email input field
+        OutlinedTextField(
+            value = email,
+            onValueChange = {
+                email = it
+            },
+            label = { Text(text = "email") }
+        )
+
+
