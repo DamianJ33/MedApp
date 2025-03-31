@@ -48,6 +48,10 @@ fun SignupScreen(
         mutableStateOf(value = "")
     }
 
+    var name by remember {
+        mutableStateOf(value = "")
+    }
+
     var passwordVisible by remember { mutableStateOf(false) }
 
     val authState = authViewModel.authState.observeAsState()
@@ -70,6 +74,16 @@ fun SignupScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = "Signup page", fontSize = 32.sp)
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = name,
+            onValueChange = {
+                name = it
+            },
+            label = { Text(text = "name") }
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -104,7 +118,7 @@ fun SignupScreen(
 
         // Signup button
         Button(onClick = {
-            authViewModel.signup(email, password, navController)
+            authViewModel.signup(name, email, password, navController)
         }) {
             Text(text = "Create account")
         }
