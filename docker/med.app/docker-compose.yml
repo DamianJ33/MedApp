@@ -14,26 +14,20 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-    networks:
-      - clinic_network
+
 
   kotlin-app:
     build: .
     container_name: kotlin_app
-    restart: always
-    depends_on:
-      - mysql
-    networks:
-      - clinic_network  # Używamy tej samej sieci co mysql
+    restart: unless-stopped  # Jeśli chcesz, by aplikacja restartowała się po awarii
+    environment:
+      DB_URL: "jdbc:mysql://mysql:3306/clinic_db"  # Używamy 'mysql' jako nazwy usługi
+      DB_USER: clinic_user
+      DB_PASSWORD: clinic_password
     ports:
       - "8080:8080"
-    environment:
-      DATABASE_URL: "jdbc:mysql://mysql:3306/clinic_db"
-      DATABASE_USER: "clinic_user"
-      DATABASE_PASSWORD: "clinic_password"
+
 
 volumes:
   mysql_data:
 
-networks:
-  clinic_network:  # Jedna sieć dla obu usług
