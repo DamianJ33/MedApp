@@ -1,12 +1,23 @@
 package com.example.mediapp.ui.theme
 
 import android.content.Context
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.mediapp.Screen.User
 import com.example.mediapp.Screen.UserDatabaseHelper
+import com.example.mediapp.ui.theme.Screen.Patient
+import com.example.mediapp.ui.theme.Screen.RetrofitClient
+
+import kotlinx.coroutines.launch
+import okhttp3.Credentials
+import retrofit2.HttpException
+import retrofit2.Retrofit
 
 class AuthViewModel() : ViewModel() {
 
@@ -17,6 +28,7 @@ class AuthViewModel() : ViewModel() {
         data class Error(val message: String) : AuthState() // Error during authentication
     }
 
+    val PatientData = mutableStateOf(Patient("","", ""))
     private lateinit var context: Context
     private lateinit var userDatabaseHelper: UserDatabaseHelper // Używamy lateinit do późniejszej inicjalizacji
     private val _authState = MutableLiveData<AuthState>()
@@ -70,34 +82,40 @@ class AuthViewModel() : ViewModel() {
     }
 
     // Rejestracja użytkownika
-    fun signup(email: String, password: String, navController: NavController) {
-        if (email.isEmpty() || password.isEmpty()) {
-            _authState.value = AuthState.Error("Email lub hasło nie mogą być puste")
+    fun signup(name: String, email: String, password: String, navController: NavController) {
+        if (email.isEmpty() || password.isEmpty() || name.isEmpty()) {
+            _authState.value = AuthState.Error("Pola nie mogą być puste")
             return
         }
 
         _authState.value = AuthState.Loading
 
-        val userExists = userDatabaseHelper.checkUserExistence(email)
-        if (userExists) {
-            _authState.value = AuthState.Error("Użytkownik już istnieje")
-            return
-        }
 
-        // Dodajemy użytkownika do bazy danych
-        val isUserAdded = userDatabaseHelper.addUser(email, password)
-        if (isUserAdded) {
-            val newUser = userDatabaseHelper.getUserByEmail(email) // Pobierz nowo dodanego użytkownika
-            newUser?.let {
-                // Zapisz userId nowego użytkownika w SharedPreferences
-                saveUserIdToSession(it.id)
-                _authState.value = AuthState.Authenticated
-                navController.navigate("home")
+        viewModelScope.launch {
+            try {
+                val response = RetrofitClient.apiService.signup(Patient(name, email, password))
+
+                // Sprawdzamy, czy odpowiedź HTTP jest udana (200 OK)
+                if (response.isSuccessful) {
+                    _authState.value = AuthState.Authenticated
+                    navController.navigate("home")
+                } else {
+                    // Jeśli odpowiedź nie jest udana, zwracamy kod błędu
+                    _authState.value = AuthState.Error("Błąd rejestracji: ${response.message()}")
+                    println(response)
+                }
+            } catch (e: HttpException) {
+                // Obsługa błędów HTTP (np. połączenie z serwerem)
+                _authState.value = AuthState.Error("Błąd sieci: ${e.message()}")
+            } catch (e: Exception) {
+                // Ogólny błąd (np. połączenie z serwerem)
+                _authState.value = AuthState.Error("Wystąpił nieoczekiwany błąd")
+                println(e.message)
             }
-        } else {
-            _authState.value = AuthState.Error("Błąd przy tworzeniu konta")
         }
     }
+
+
 
     // Wylogowanie użytkownika
     fun signout() {
@@ -117,6 +135,10 @@ class AuthViewModel() : ViewModel() {
     // Funkcja getUserByEmail (już dodana w klasie UserDatabaseHelper)
     fun getUserByEmail(email: String): User? {
         return userDatabaseHelper.getUserByEmail(email)
+    }
+
+     suspend fun getPatient(email: String){
+        PatientData.value = RetrofitClient.apiService.GetPatient(email)
     }
 
 
