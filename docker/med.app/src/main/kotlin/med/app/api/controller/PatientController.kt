@@ -2,6 +2,8 @@ package med.app.api.controller
 
 import med.app.api.model.Patient
 import med.app.api.service.PatientService
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 
@@ -20,13 +22,16 @@ class PatientController(private val service: PatientService) {
 
 
     @PostMapping("/register")
-    fun registerPatient(
-        @RequestHeader headers: Map<String, String>,
-        @RequestBody patient: Patient
-    ): ResponseEntity<Unit> {
-        println("Headers: $headers")
-        return ResponseEntity.ok().build()
+    fun registerPatient(@RequestBody patient: Patient): ResponseEntity<Any> {
+        return try {
+            service.registerPatient(patient)
+            ResponseEntity.ok(mapOf("message" to "konto zostało utworzone"))
+        } catch (e: Exception) {
+            println("Błąd przy rejestracji: ${e.message}")
+            ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(mapOf("message" to "Rejestracja nieudana: ${e.message}"))
+        }
     }
 }
-    }
+
 

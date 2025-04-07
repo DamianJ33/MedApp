@@ -16,8 +16,7 @@ interface ApiService {
     @GET("/api/patients/{email}")
     suspend fun GetPatient(@Path("email") email: String): Patient
     @POST("/api/patients/register")
-    @Headers("Accept: application/json", "Content-Type: application/json")
-    suspend fun signup( @Body patient: Patient): Response<SignupResponse>
+    suspend fun signup(@Body patient: Patient): Response<ResponseBody>
 
 }
 

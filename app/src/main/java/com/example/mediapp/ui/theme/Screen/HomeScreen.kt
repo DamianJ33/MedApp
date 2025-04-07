@@ -63,7 +63,9 @@ fun TopBar(navController: NavController, authViewModel: AuthViewModel) {
 fun HomeButton(text: String, onClick: () -> Unit) {
     Button(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
     ) {
         Text(text)
     }
