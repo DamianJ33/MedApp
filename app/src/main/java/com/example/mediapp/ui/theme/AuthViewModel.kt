@@ -141,5 +141,27 @@ class AuthViewModel() : ViewModel() {
         PatientData.value = RetrofitClient.apiService.GetPatient(email)
     }
 
+    fun bookAppointment(
+        date: String,
+        time: String,
+        reason: String,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        viewModelScope.launch {
+            try {
+                val appointment = AppointmentRequest(date, time, reason)
+                val response = apiService.bookAppointment(appointment)
+                if (response.isSuccessful) {
+                    onSuccess()
+                } else {
+                    onError("Błąd serwera: ${response.code()} ${response.message()}")
+                }
+            } catch (e: Exception) {
+                onError("Błąd połączenia: ${e.message}")
+            }
+        }
+    }
+
 
 }
