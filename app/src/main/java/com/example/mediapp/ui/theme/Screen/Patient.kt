@@ -10,3 +10,9 @@ data class LoginRequest(
     val email: String,
     val password: String,
 )
+
+data class AppointmentRequest(
+    val date: String,
+    val time: String,
+    val reason: String
+)
