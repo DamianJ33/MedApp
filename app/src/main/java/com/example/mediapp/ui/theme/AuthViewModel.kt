@@ -11,8 +11,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.mediapp.Screen.User
 import com.example.mediapp.Screen.UserDatabaseHelper
+import com.example.mediapp.ui.theme.Screen.AppointmentRequest
+import com.example.mediapp.ui.theme.Screen.LoginRequest
 import com.example.mediapp.ui.theme.Screen.Patient
 import com.example.mediapp.ui.theme.Screen.RetrofitClient
+import com.example.mediapp.ui.theme.Screen.RetrofitClient.apiService
 
 import kotlinx.coroutines.launch
 import okhttp3.Credentials
@@ -63,21 +66,26 @@ class AuthViewModel() : ViewModel() {
 
 
     // Logowanie użytkownika
-    fun login(email: String, password: String) {
+    fun login(email: String, password: String, navController: NavController) {
         if (email.isEmpty() || password.isEmpty()) {
-            _authState.value = AuthState.Error("Email lub hasło nie mogą być puste")
+            _authState.value = AuthState.Error("Pola nie mogą być puste")
             return
         }
 
         _authState.value = AuthState.Loading
 
-        val user = userDatabaseHelper.getUserByEmail(email)
-        if (user != null && user.password == password) {
-            // Zapisz userId w SharedPreferences
-            saveUserIdToSession(user.id)
-            _authState.value = AuthState.Authenticated
-        } else {
-            _authState.value = AuthState.Error("Błędny email lub hasło")
+        viewModelScope.launch {
+            try {
+                val response = RetrofitClient.apiService.login(LoginRequest(email, password))
+                if (response.isSuccessful) {
+                    _authState.value = AuthState.Authenticated
+                    navController.navigate("home")
+                } else {
+                    _authState.value = AuthState.Error("Błąd logowania: ${response.message()}")
+                }
+            } catch (e: Exception) {
+                _authState.value = AuthState.Error("Błąd: ${e.message}")
+            }
         }
     }
 
@@ -162,6 +170,5 @@ class AuthViewModel() : ViewModel() {
             }
         }
     }
-
 
 }
