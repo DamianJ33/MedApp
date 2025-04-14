@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 
 
 import com.example.mediapp.ui.theme.AuthViewModel
+import com.example.mediapp.ui.theme.Screen.AppointmentScreen
 
 @Composable
 fun AppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel, navController: NavHostController) {
@@ -19,7 +20,7 @@ fun AppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel, n
         composable("login") { LoginScreen(modifier = modifier, navController = navController, authViewModel = authViewModel) }
         composable("signup") { SignupScreen(modifier = modifier, navController = navController, authViewModel = authViewModel) }
         composable("home") { HomeScreen(navController, authViewModel) }
-//        composable("appointments") { AppointmentScreen(navController, authViewModel) }
+        composable("appointments") { AppointmentScreen(navController, authViewModel) }
 //        composable("medical_history") { MedicalHistoryScreen(navController, authViewModel) }
 //        composable("profile") { ProfileScreen(navController, authViewModel) }
     }
