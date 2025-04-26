@@ -88,23 +88,7 @@ fun LoginScreen(
         Button(
             onClick = {
                 if (isEmailValid(email) && isPasswordValid(password)) {
-                    isLoading = true
-                    scope.launch {
-                        try {
-                            val user = authViewModel.getUserByEmail(email)
-                            if (user != null && user.password == password) {
-                                navController.navigate("home") {
-                                    popUpTo("login") { inclusive = true } // This will clear the back stack
-                                }
-                            } else {
-                                Toast.makeText(context, "Invalid email or password", Toast.LENGTH_SHORT).show()
-                            }
-                        } catch (e: Exception) {
-                            Toast.makeText(context, "An error occurred. Please try again.", Toast.LENGTH_SHORT).show()
-                        } finally {
-                            isLoading = false
-                        }
-                    }
+                    authViewModel.login(email, password, navController)
                 } else {
                     Toast.makeText(context, "Please enter valid email and password", Toast.LENGTH_SHORT).show()
                 }
