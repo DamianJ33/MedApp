@@ -76,8 +76,7 @@ fun AppointmentScreen(
                     authViewModel.bookAppointment(selectedDate, selectedTime, reason,
                         onSuccess = {
                             isLoading = false
-                            Toast.makeText(context, "Wizyta zarezerwowana!", Toast.LENGTH_SHORT)
-                                .show()
+                            Toast.makeText(context, "Wizyta zarezerwowana!", Toast.LENGTH_SHORT).show()
                             navController.popBackStack()
                         },
                         onError = { message ->
@@ -97,5 +96,18 @@ fun AppointmentScreen(
                 Text("Zarezerwuj")
             }
         }
+
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Dodaj przycisk do historii wizyt
+        Button(
+            onClick = {
+                navController.navigate("appointmentHistory") // Zmienna "appointmentHistory" powinna być zdefiniowana w nawigacji
+            }
+        ) {
+            Text("Zobacz historię wizyt")
+        }
     }
 }
+
