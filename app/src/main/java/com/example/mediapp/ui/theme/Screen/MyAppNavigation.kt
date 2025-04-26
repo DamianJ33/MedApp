@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.mediapp.ui.screens.AppointmentListScreen
 
 
 import com.example.mediapp.ui.theme.AuthViewModel
@@ -21,7 +22,7 @@ fun AppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel, n
         composable("signup") { SignupScreen(modifier = modifier, navController = navController, authViewModel = authViewModel) }
         composable("home") { HomeScreen(navController, authViewModel) }
         composable("appointments") { AppointmentScreen(navController, authViewModel) }
-//        composable("medical_history") { MedicalHistoryScreen(navController, authViewModel) }
+        composable("appointmentHistory") { AppointmentListScreen(navController, authViewModel) }
 //        composable("profile") { ProfileScreen(navController, authViewModel) }
     }
 }
