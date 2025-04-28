@@ -14,15 +14,19 @@ import com.example.mediapp.Screen.UserDatabaseHelper
 import com.example.mediapp.ui.theme.Screen.AppointmentRequest
 import com.example.mediapp.ui.theme.Screen.LoginRequest
 import com.example.mediapp.ui.theme.Screen.Patient
+import com.example.mediapp.ui.theme.Screen.PatientRepository
 import com.example.mediapp.ui.theme.Screen.RetrofitClient
 import com.example.mediapp.ui.theme.Screen.RetrofitClient.apiService
+import dagger.hilt.android.lifecycle.HiltViewModel
 
 import kotlinx.coroutines.launch
 import okhttp3.Credentials
 import retrofit2.HttpException
 import retrofit2.Retrofit
+import javax.inject.Inject
 
-class AuthViewModel() : ViewModel() {
+@HiltViewModel
+class AuthViewModel @Inject constructor(private val repository: PatientRepository) : ViewModel() {
 
     sealed class AuthState {
         object Authenticated : AuthState() // User is logged in
@@ -76,7 +80,7 @@ class AuthViewModel() : ViewModel() {
 
         viewModelScope.launch {
             try {
-                val response = RetrofitClient.apiService.login(LoginRequest(email, password))
+                val response = repository.login(email, password) // Zmienione wywołanie
                 if (response.isSuccessful) {
                     _authState.value = AuthState.Authenticated
                     navController.navigate("home")
@@ -101,7 +105,7 @@ class AuthViewModel() : ViewModel() {
 
         viewModelScope.launch {
             try {
-                val response = RetrofitClient.apiService.signup(Patient(name, email, password))
+                val response = repository.signup(Patient(name, email, password))
 
                 // Sprawdzamy, czy odpowiedź HTTP jest udana (200 OK)
                 if (response.isSuccessful) {
@@ -146,7 +150,7 @@ class AuthViewModel() : ViewModel() {
     }
 
      suspend fun getPatient(email: String){
-        PatientData.value = RetrofitClient.apiService.GetPatient(email)
+        PatientData.value = repository.GetPatient(email)
     }
 
     fun bookAppointment(
@@ -159,7 +163,7 @@ class AuthViewModel() : ViewModel() {
         viewModelScope.launch {
             try {
                 val appointment = AppointmentRequest(date, time, reason)
-                val response = apiService.bookAppointment(appointment)
+                val response = repository.bookAppointment(appointment)
                 if (response.isSuccessful) {
                     onSuccess()
                 } else {
